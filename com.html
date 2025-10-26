@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShortLink | Modern URL Shortener</title>
+    <title>ShortLink Pro | Modern URL Shortener</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -23,6 +23,7 @@
             --danger: #e63946;
             --gray: #6c757d;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         body {
@@ -95,6 +96,9 @@
             transition: all 0.3s;
             border: none;
             font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         .btn-outline {
@@ -115,7 +119,7 @@
 
         /* Hero Section */
         .hero {
-            padding: 80px 0;
+            padding: 100px 0;
             text-align: center;
             background: linear-gradient(135deg, #f5f7ff 0%, #e6ecff 100%);
         }
@@ -129,8 +133,59 @@
         .hero p {
             font-size: 1.2rem;
             max-width: 700px;
-            margin: 0 auto 40px;
+            margin: 0 auto 60px;
             color: var(--gray);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-card {
+            background: white;
+            padding: 50px 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .hero-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-card.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .hero-card.secondary {
+            background: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            color: white;
+        }
+
+        .hero-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .hero-card p {
+            font-size: 1rem;
+            opacity: 0.9;
         }
 
         /* URL Shortener Section */
@@ -427,6 +482,10 @@
                 font-size: 2.5rem;
             }
 
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
             .url-form {
                 flex-direction: column;
             }
@@ -451,7 +510,7 @@
             <nav class="navbar">
                 <div class="logo">
                     <i class="fas fa-link"></i>
-                    <span>ShortLink</span>
+                    <span>ShortLink Pro</span>
                 </div>
                 <div class="nav-links">
                     <a href="#features">Features</a>
@@ -472,6 +531,23 @@
         <div class="container">
             <h1>Shorten Your Links, Amplify Your Reach</h1>
             <p>Create short, memorable URLs and track their performance with our powerful analytics platform.</p>
+            
+            <div class="hero-grid">
+                <a href="https://yourkalon.github.io/urlshortner/index.html" target="_blank" class="hero-card primary">
+                    <div class="hero-icon">
+                        <i class="fas fa-compress-alt"></i>
+                    </div>
+                    <h3>URL Shortener</h3>
+                    <p>Create short, branded links that are easy to share and track</p>
+                </a>
+                <a href="https://yourkalon.github.io/urlshortner/admin.html" target="_blank" class="hero-card secondary">
+                    <div class="hero-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Analytics</h3>
+                    <p>Gain insights into your link performance with detailed analytics</p>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -480,7 +556,7 @@
         <div class="container">
             <div class="url-form">
                 <input type="url" class="url-input" placeholder="Paste your long URL here...">
-                <button class="btn btn-primary" id="shorten-btn">Shorten URL</button>
+                <a href="https://yourkalon.github.io/urlshortner/index.html"><button class="btn btn-primary" id="shorten-btn">Shorten URL</button>
             </div>
             <div class="result" id="result">
                 <a href="#" class="short-url" id="short-url" target="_blank">https://shrt.link/abc123</a>
@@ -638,7 +714,7 @@
                 <div class="footer-column">
                     <div class="logo" style="color: white; margin-bottom: 20px;">
                         <i class="fas fa-link"></i>
-                        <span>ShortLink</span>
+                        <span>ShortLink Pro</span>
                     </div>
                     <p style="color: #b0b0b0; margin-bottom: 20px;">The modern URL shortener with powerful analytics and customization options.</p>
                     <div class="social-links">
@@ -677,7 +753,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 ShortLink. All rights reserved.</p>
+                <p>&copy; 2023 ShortLink Pro. All rights reserved.</p>
             </div>
         </div>
     </footer>
