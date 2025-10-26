@@ -139,7 +139,7 @@
 
         .hero-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
             max-width: 900px;
             margin: 0 auto;
@@ -147,7 +147,7 @@
 
         .hero-card {
             background: white;
-            padding: 50px 30px;
+            padding: 30px 20px; /* smaller padding */
             border-radius: 16px;
             box-shadow: var(--shadow);
             transition: all 0.4s ease;
@@ -174,17 +174,17 @@
         }
 
         .hero-icon {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-        }
-
-        .hero-card h3 {
-            font-size: 1.8rem;
+            font-size: 2.5rem; /* smaller icon */
             margin-bottom: 15px;
         }
 
+        .hero-card h3 {
+            font-size: 1.4rem; /* smaller heading */
+            margin-bottom: 10px;
+        }
+
         .hero-card p {
-            font-size: 1rem;
+            font-size: 0.9rem; /* smaller paragraph */
             opacity: 0.9;
         }
 
@@ -547,6 +547,14 @@
                     <h3>Analytics</h3>
                     <p>Gain insights into your link performance with detailed analytics</p>
                 </a>
+                <!-- New Ads Card -->
+                <a href="https://yourkalon.github.io/urlshortner/ads.html" target="_blank" class="hero-card primary">
+                    <div class="hero-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>Ads</h3>
+                    <p>Create and manage advertising campaigns for your links</p>
+                </a>
             </div>
         </div>
     </section>
@@ -556,7 +564,7 @@
         <div class="container">
             <div class="url-form">
                 <input type="url" class="url-input" placeholder="Paste your long URL here...">
-                <a href="https://yourkalon.github.io/urlshortner/index.html"><button class="btn btn-primary" id="shorten-btn">Shorten URL</button>
+                <a href="https://yourkalon.github.io/urlshortner/index.html"><button class="btn btn-primary" id="shorten-btn">Shorten URL</button></a>
             </div>
             <div class="result" id="result">
                 <a href="#" class="short-url" id="short-url" target="_blank">https://shrt.link/abc123</a>
@@ -766,8 +774,6 @@
             const shortUrl = document.getElementById('short-url');
             
             if (urlInput.value) {
-                // In a real app, this would call an API to shorten the URL
-                // For demo purposes, we'll generate a random short code
                 const randomCode = Math.random().toString(36).substring(2, 8);
                 shortUrl.href = `https://shrt.link/${randomCode}`;
                 shortUrl.textContent = `https://shrt.link/${randomCode}`;
