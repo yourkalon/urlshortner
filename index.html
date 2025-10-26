@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html lang="bn">
-<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>URL Shortener</title>
-</head>
+<title>Redirecting...</title>
 <body>
-<h3>URL Shortener</h3>
-<input id="u" placeholder="Enter URL">
-<button onclick="s()">Shorten</button>
-<div id="r"></div>
+<p>Redirecting...</p>
 <script>
 const F="https://urlshortener-d1814-default-rtdb.asia-southeast1.firebasedatabase.app/";
-function g(l=5){const c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";return Array.from({length:l},()=>c[Math.floor(Math.random()*c.length)]).join('');}
-async function s(){let u=document.getElementById("u").value.trim();if(!u){alert("Enter URL!");return;}let code=g();await fetch(`${F}/links/${code}.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({longUrl:u,created:new Date().toISOString()})});let short=`${window.location.origin}${window.location.pathname.replace("index.html","")}redirect.html?c=${code}`;document.getElementById("r").innerHTML=`<a href="${short}" target="_blank">${short}</a>`;}
+const params=new URLSearchParams(location.search);
+const c=params.get("c");
+if(c){
+  fetch(`${F}/links/${c}.json`)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d && d.longUrl){
+        location.href=d.longUrl;
+      }else{
+        document.body.innerHTML="<p>Invalid or expired link.</p>";
+      }
+    })
+    .catch(e=>document.body.innerHTML="<p>Error fetching URL.</p>");
+}else{
+  document.body.innerHTML="<p>No code provided.</p>";
+}
 </script>
 </body>
 </html>
