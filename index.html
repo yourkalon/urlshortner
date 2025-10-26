@@ -50,6 +50,8 @@
   <div class="box">
     <h2>🔗 URL Shortener</h2>
     <input type="text" id="longUrl" placeholder="Enter your long URL..." />
+    <input type="text" id="shortCode" placeholder="Enter custom short code (optional)" />
+    <input type="text" id="title" placeholder="Enter title (optional)" />
     <button onclick="shortenUrl()">Shorten</button>
     <div class="result" id="result"></div>
   </div>
@@ -65,23 +67,39 @@
 
     async function shortenUrl() {
       const longUrl = document.getElementById("longUrl").value.trim();
+      let shortCode = document.getElementById("shortCode").value.trim();
+      const title = document.getElementById("title").value.trim();
+
       if (!longUrl) {
         alert("Please enter a valid URL!");
         return;
       }
 
-      const shortCode = generateID();
-      const data = { longUrl, created: new Date().toISOString() };
+      // যদি custom short code না দেওয়া হয়, তাহলে random generate হবে
+      if (!shortCode) {
+        shortCode = generateID();
+      }
 
-      // Firebase এ সেভ করা
-      await fetch(`${FIREBASE_URL}/links/${shortCode}.json`, {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
-      });
+      const data = {
+        longUrl,
+        title: title || null,
+        created: new Date().toISOString()
+      };
 
-      const shortUrl = `${window.location.origin}${window.location.pathname.replace("index.html","")}redirect.html?c=${shortCode}`;
-      document.getElementById("result").innerHTML = `✅ Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
+      try {
+        // Firebase এ সেভ করা
+        await fetch(`${FIREBASE_URL}/links/${shortCode}.json`, {
+          method: "PUT",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const shortUrl = `${window.location.origin}${window.location.pathname.replace("index.html","")}redirect.html?c=${shortCode}`;
+        document.getElementById("result").innerHTML = `✅ Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
+      } catch (err) {
+        alert("Error saving URL! Maybe the short code already exists.");
+        console.error(err);
+      }
     }
   </script>
 </body>
