@@ -1,53 +1,189 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Firebase URL Shortener</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting...</title>
-  <script>
-    const FIREBASE_URL = "https://urlshortener-d1814-default-rtdb.asia-southeast1.firebasedatabase.app/";
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0a0f2c;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+    }
+    .card {
+      background-color: #12163a;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+    input, select {
+      background-color: #1b204a !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 8px !important;
+    }
+    .btn-primary {
+      background-color: #3b82f6;
+      border: none;
+      border-radius: 8px;
+    }
+    .btn-primary:hover { background-color: #2563eb; }
+    .btn-secondary { border-radius: 8px; }
+    table { color: white; }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Firebase URL Shortener</h2>
 
-    async function redirectNow() {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get("c");
-      if (!code) {
-        document.body.innerHTML = "<h2>❌ Invalid shortlink.</h2>";
+    <form id="shortenForm" class="mb-4">
+      <div class="input-group mb-3">
+        <input type="text" id="urlInput" class="form-control" placeholder="https://your-long-url.com" required>
+      </div>
+
+      <div class="input-group mb-3">
+        <input type="text" id="customAlias" class="form-control" placeholder="Custom alias (optional)">
+      </div>
+
+      <div class="input-group mb-3">
+        <select id="dropdownName" class="form-control" required>
+          <option value="">-- Select Name --</option>
+          <option value="Siam">Siam</option>
+          <option value="Shihab">Shihab</option>
+          <option value="Mahatb">Mahatb</option>
+          <option value="Parves">Parves</option>
+        </select>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Shorten URL</button>
+      </div>
+    </form>
+
+    <div id="shortenedURLContainer" class="card p-3 mb-4" style="display: none;">
+      <h5>Shortened URL</h5>
+      <div class="input-group mb-2">
+        <input type="text" id="shortenedURL" class="form-control" readonly>
+        <div class="input-group-append">
+          <button id="copyButton" class="btn btn-secondary">Copy</button>
+        </div>
+      </div>
+      <small class="text-muted" id="shortenedURLId"></small>
+    </div>
+
+    <h4>Saved Shortened URLs</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered table-dark table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Shortened URL</th>
+            <th>ID</th>
+            <th>Traffic</th>
+          </tr>
+        </thead>
+        <tbody id="savedLinksBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="text-center mt-5 mb-3 text-muted">
+    <p>&copy; 2025 Firebase URL Shortener | CXDIIN</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTSTy48s2smwk4Mocl5g0CSIZFTLmzAA4",
+      authDomain: "urlshortener-d1814.firebaseapp.com",
+      databaseURL: "https://urlshortener-d1814-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "urlshortener-d1814",
+      storageBucket: "urlshortener-d1814.firebasestorage.app",
+      messagingSenderId: "714238369401",
+      appId: "1:714238369401:web:1e8b3d5fe6061407f4fea8",
+      measurementId: "G-DSLXECNPD8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const form = document.getElementById("shortenForm");
+    const savedLinksBody = document.getElementById("savedLinksBody");
+
+    function generateShortId() {
+      return Math.random().toString(36).substring(2, 8);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = document.getElementById("urlInput").value.trim();
+      const alias = document.getElementById("customAlias").value.trim();
+      const name = document.getElementById("dropdownName").value;
+
+      if (!name) {
+        alert("Please select a name first!");
         return;
       }
 
-      try {
-        const res = await fetch(`${FIREBASE_URL}/links/${code}.json`);
-        const data = await res.json();
+      const id = alias || generateShortId();
+      const shortUrl = `${window.location.origin}/?id=${id}`;
 
-        if (data && data.longUrl) {
-          // Visit log সেভ করা
-          const visit = {
-            code,
-            time: new Date().toISOString(),
-            ua: navigator.userAgent,
-            ref: document.referrer || "Direct"
-          };
-          await fetch(`${FIREBASE_URL}/visits.json`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(visit)
-          });
+      // Show in UI
+      document.getElementById("shortenedURL").value = shortUrl;
+      document.getElementById("shortenedURLId").textContent = `ID: ${id}`;
+      document.getElementById("shortenedURLContainer").style.display = "block";
 
-          // Redirect
-          window.location.href = data.longUrl;
-        } else {
-          document.body.innerHTML = "<h2>❌ Link expired or not found.</h2>";
-        }
-      } catch (e) {
-        document.body.innerHTML = "<h2>⚠️ Error fetching link.</h2>";
-        console.error(e);
-      }
-    }
+      // Save to Firebase
+      const newRef = push(ref(db, "shortenedLinks"));
+      await set(newRef, {
+        name,
+        id,
+        shortUrl,
+        fullUrl: url,
+        timestamp: new Date().toLocaleString(),
+        traffic: 0
+      });
 
-    window.onload = redirectNow;
+      alert("Short URL saved successfully!");
+    });
+
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const input = document.getElementById("shortenedURL");
+      input.select();
+      document.execCommand("copy");
+      alert("Copied to clipboard!");
+    });
+
+    // Display saved URLs
+    const linksRef = ref(db, "shortenedLinks");
+    onValue(linksRef, (snapshot) => {
+      savedLinksBody.innerHTML = "";
+      snapshot.forEach((child) => {
+        const link = child.val();
+        const key = child.key;
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${link.name}</td>
+          <td><a href="${link.shortUrl}" target="_blank" style="color:#3b82f6;">${link.shortUrl}</a></td>
+          <td>${link.id}</td>
+          <td><button class="btn btn-primary btn-sm" data-key="${key}">Get Traffic (${link.traffic || 0})</button></td>
+        `;
+
+        // Traffic Button
+        tr.querySelector("button").addEventListener("click", async (e) => {
+          const linkKey = e.target.getAttribute("data-key");
+          const newTraffic = (link.traffic || 0) + 1;
+          await update(ref(db, `shortenedLinks/${linkKey}`), { traffic: newTraffic });
+        });
+
+        savedLinksBody.appendChild(tr);
+      });
+    });
   </script>
-</head>
-<body>
-  <p style="text-align:center;margin-top:30%;">Redirecting...</p>
 </body>
 </html>
